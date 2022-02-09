@@ -1,0 +1,10 @@
+temps de simulation : 2.51732649999758
+temps de simulation : 2.4084714999989956
+temps de simulation : 2.6791448000003584
+temps de simulation : 2.80464469999788
+temps de simulation : 2.9774379000009503
+temps de simulation : 2.487195599998813
+temps de simulation : 2.5566739000023517
+temps de simulation : 2.5179208000008657
+temps de simulation : 2.6522181000000273
+temps de simulation : 3.9394214999992982
