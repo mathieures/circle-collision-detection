@@ -12,6 +12,9 @@ class Rectangle:
     def __repr__(self):
         return f"{type(self).__name__}, {self.x, self.y, self.width, self.height}"
 
+    def __iter__(self):
+        return iter((self.x, self.y, self.width, self.height))
+
 
 class DebugRectangle(Rectangle):
     """Un Rectangle mais qui est affiché graphiquement"""
@@ -23,3 +26,11 @@ class DebugRectangle(Rectangle):
             (self.x + self.width, self.y + self.height),
             **kwargs
         )
+
+
+    def delete(self):
+        """Supprime le rectangle graphiquement"""
+        try:
+            dpg.delete_item(self.tag)
+        except SystemError:
+            pass

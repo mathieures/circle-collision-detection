@@ -1,4 +1,5 @@
-import dearpygui.dearpygui as dpg
+from numba import jit
+# https://gamedevelopment.tutsplus.com/tutorials/quick-tip-use-quadtrees-to-detect-likely-collisions-in-2d-space--gamedev-374
 from Rectangle import Rectangle, DebugRectangle
 import couleurs
 
@@ -7,7 +8,44 @@ class Quadtree:
     """Un quadtree, ou arbre quartique"""
     # MAX_OBJECTS = 5
     MAX_OBJECTS = 5
-    MAX_LEVELS = 10
+    # MAX_LEVELS = 10
+    MAX_LEVELS = 20
+
+    @staticmethod
+    @jit(nopython=True)
+    def get_index_from_bb(self_rect, other_rect):
+        """test de compiler cette fonction"""
+        index = -1
+
+        self_x, self_y, self_height, self_width = self_rect
+        rect_x, rect_y, rect_height, rect_width = other_rect
+
+        vertical_midpoint = self_x + self_width // 2
+        horizontal_midpoint = self_y + self_height // 2
+
+        # Est-ce que l'objet peut complètement tenir dans la moitié haute ?
+        in_top_half = rect_y < horizontal_midpoint and rect_y + rect_height < horizontal_midpoint
+
+        # Est-ce que l'objet peut complètement tenir dans la moitié basse ?
+        in_bottom_half = rect_y > horizontal_midpoint # On peut ne tester que l'origine
+
+        # S'il peut complètement tenir dans la partie gauche
+        if rect_x < vertical_midpoint and rect_x + rect_width < vertical_midpoint:
+            # S'il tenait dans la partie haute, il est en haut à gauche
+            if in_top_half:
+                index = 1
+            elif in_bottom_half:
+                index = 2
+        # S'il peut complètement tenir dans la partie droite
+        elif rect_x > vertical_midpoint:
+            if in_top_half:
+                index = 0
+            elif in_bottom_half:
+                index = 3
+
+        return index
+
+
 
     def __init__(self, window, level, bounds):
         self.window = window
@@ -18,19 +56,17 @@ class Quadtree:
 
         self.debug_zones = []
 
+
     def clear(self):
         """Efface récursivement le Quadtree"""
+        for zone in self.debug_zones:
+            zone.delete()
+
         self.objects.clear()
         for i, node in enumerate(self.nodes):
             if node is not None:
                 node.clear() # appelle la méthode clear() du Quadtree fils
                 self.nodes[i] = None
-
-    def clear_debug_zones(self):
-        """Efface les zones dessinées"""
-        for zone in self.debug_zones:
-            dpg.delete_item(zone.tag)
-        self.debug_zones.clear()
 
     def split(self):
         """Sépare le Quadtree en 4 noeuds Quadtree fils"""
@@ -64,31 +100,9 @@ class Quadtree:
         Retourne l'indice du fils dans lequel l'objet passé
         en paramètre devra aller, ou -1 s'il n'est dans aucun
         """
-        rect = objet.bounding_box
-        index = -1
-
-        vertical_midpoint = self.bounds.x + self.bounds.width // 2
-        horizontal_midpoint = self.bounds.y + self.bounds.height // 2
-
-        # Est-ce que l'objet peut complètement tenir dans la moitié haute ?
-        in_top_half = rect.y < horizontal_midpoint and rect.y + rect.height < horizontal_midpoint
-
-        # Est-ce que l'objet peut complètement tenir dans la moitié basse ?
-        in_bottom_half = rect.y > horizontal_midpoint # On peut ne tester que l'origine
-
-        # S'il peut complètement tenir dans la partie gauche
-        if rect.x < vertical_midpoint and rect.x + rect.width < vertical_midpoint:
-            # S'il tenait dans la partie haute, il est en haut à gauche
-            if in_top_half:
-                index = 1
-            elif in_bottom_half:
-                index = 2
-        # S'il peut complètement tenir dans la partie droite
-        elif rect.x > vertical_midpoint:
-            if in_top_half:
-                index = 0
-            elif in_bottom_half:
-                index = 3
+        self_rect = tuple(self.bounds)
+        other_rect = tuple(objet.bounding_box)
+        index = self.get_index_from_bb(self_rect, other_rect)
 
         return index
 

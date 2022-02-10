@@ -1,6 +1,7 @@
 import sys
 from random import randrange, seed
 from time import perf_counter
+from itertools import chain
 
 import dearpygui.dearpygui as dpg
 from Obstacle import Obstacle
@@ -12,11 +13,11 @@ def rand_coords(limit=500):
     """Paire de coordonnées aléatoires"""
     return (randrange(limit), randrange(limit))
 
-def update():
+def update_naif():
     """Exécuté chaque frame"""
     nb_operations = 0
 
-    obstacles = [*essaim_obstacles, *mur]
+    obstacles = list(chain(essaim_obstacles, mur))
     for particule in essaim_particules:
         particule.move(1, 0)
         for obstacle in obstacles:
@@ -24,35 +25,28 @@ def update():
             if particule.check_collision(obstacle):
                 essaim_particules.remove(particule)
                 break
-    print(f"{nb_operations=}")
+    # print(f"{nb_operations=}")
 
-
-def update_2():
+def update_quadtree():
+    """Exécuté chaque frame"""
     quad.clear()
-    # quad.clear_debug_zones()
-    quad.insert_all([*essaim_particules, *essaim_obstacles, *mur])
-    # for objet in objets:
-    #     quad.insert(objet)
+    quad.insert_all(chain(essaim_particules, essaim_obstacles, mur))
 
     nb_operations = 0
     for particule in essaim_particules:
         particule.move(1.5, 0)
-        # collisions_potentielles = quad.retrieve(particule)
         collisions_potentielles = set(quad.retrieve(particule)) - set([particule])
-        # print(f"col pot de {particule} : {collisions_potentielles}")
         for autre in collisions_potentielles:
             nb_operations += 1
             # particule.check_collision(autre)
             if particule.check_collision(autre):
                 essaim_particules.remove(particule)
                 break # On retourne à la grande boucle
-    print(f"{nb_operations=}")
+    # print(f"{nb_operations=}")
 
 
 ## Variables globales ##
 
-# previous_perf_counter = perf_counter()
-# delta_time = 0
 DIMENSIONS_FENETRE = (600, 600)
 MIN_COORD = int(min(DIMENSIONS_FENETRE))
 
@@ -81,7 +75,7 @@ with dpg.window(tag="primary_window"):
     # obstacles = [*essaim_obstacles, *mur]
 
     # with dpg.handler_registry():
-    #     dpg.add_mouse_move_handler(callback=update, user_data=data)
+    #     dpg.add_mouse_move_handler(callback=update_naif, user_data=data)
 dpg.set_primary_window("primary_window", True)
 
 with dpg.theme() as global_theme:
@@ -103,9 +97,9 @@ dpg.show_viewport()
 
 
 if len(sys.argv) > 1:
-    update_function = update
+    update_function = update_naif
 else:
-    update_function = update_2
+    update_function = update_quadtree
 
 
 
@@ -113,5 +107,5 @@ t = perf_counter()
 while dpg.is_dearpygui_running():
     update_function()
     dpg.render_dearpygui_frame()
-# print(f"temps de simulation : {perf_counter() - t}")
+print(f"temps de simulation : {perf_counter() - t}")
 dpg.destroy_context()
