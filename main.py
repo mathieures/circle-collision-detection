@@ -17,7 +17,7 @@ def update_naive():
     """Exécuté chaque frame"""
     nb_operations = 0
 
-    obstacles = list(chain(swarm_obstacles, mur))
+    obstacles = list(chain(swarm_obstacles, wall))
     for particule in swarm_particules:
         particule.move(1, 0)
         for obstacle in obstacles:
@@ -30,7 +30,7 @@ def update_naive():
 def update_quadtree():
     """Exécuté chaque frame"""
     quad.clear()
-    quad.insert_all(chain(swarm_particules, swarm_obstacles, mur))
+    quad.insert_all(chain(swarm_particules, swarm_obstacles, wall))
 
     nb_operations = 0
     for particule in swarm_particules:
@@ -47,8 +47,8 @@ def update_quadtree():
 
 ## Variables globales ##
 
-DIMENSIONS_FENETRE = (600, 600)
-MIN_COORD = int(min(DIMENSIONS_FENETRE) - 10)
+WINDOW_DIMENSIONS = (600, 600)
+MIN_COORD = int(min(WINDOW_DIMENSIONS) - 10)
 
 NB_PARTICULES = 1000
 RADIUS_PARTICULES = 3
@@ -56,7 +56,7 @@ coords_particules = [rand_coords(MIN_COORD) for _ in range(NB_PARTICULES)]
 NB_OBSTACLES = 30
 coords_obstacles = [rand_coords(MIN_COORD) for _ in range(NB_OBSTACLES)]
 
-coords_mur = [(DIMENSIONS_FENETRE[0], y)
+coords_wall = [(WINDOW_DIMENSIONS[0], y)
               for y in range(0,
                              MIN_COORD + Obstacle.RADIUS,
                              Obstacle.RADIUS * 2)]
@@ -65,14 +65,14 @@ seed(0)
 dpg.create_context()
 
 with dpg.window(tag="primary_window"):
-    quad = Quadtree("primary_window", level=0, bounds=Rectangle(0, 0, *DIMENSIONS_FENETRE))
+    quad = Quadtree("primary_window", level=0, bounds=Rectangle(0, 0, *WINDOW_DIMENSIONS))
 
-    mur = Swarm.obstacles(coords_mur)
+    wall = Swarm.obstacles(coords_wall)
 
     swarm_particules = Swarm.particules(coords_particules, RADIUS_PARTICULES)
     swarm_obstacles = Swarm.obstacles(coords_obstacles)
 
-    # obstacles = [*swarm_obstacles, *mur]
+    # obstacles = [*swarm_obstacles, *wall]
 
     # with dpg.handler_registry():
     #     dpg.add_mouse_move_handler(callback=update_naive, user_data=data)
@@ -84,8 +84,9 @@ with dpg.theme() as global_theme:
 dpg.bind_theme(global_theme)
 
 
-dpg.create_viewport(width=DIMENSIONS_FENETRE[0] + 30,
-                    height=DIMENSIONS_FENETRE[1] + 50,
+# Le (0, 0) n'est pas vraiment en haut à gauche donc il faut compenser
+dpg.create_viewport(width=WINDOW_DIMENSIONS[0] + 30,
+                    height=WINDOW_DIMENSIONS[1] + 50,
                     y_pos=0)
 dpg.setup_dearpygui()
 dpg.show_viewport()
@@ -100,7 +101,6 @@ if len(sys.argv) > 1:
     update_function = update_naive
 else:
     update_function = update_quadtree
-
 
 
 t = perf_counter()
