@@ -2,14 +2,6 @@ import dearpygui.dearpygui as dpg
 from Rectangle import Rectangle
 
 
-"""
-TODO : implanter un quad/octree
-       Ah, sinon, faire des tests sur un truc à part et "recopier" ici
-       genre en affichant des points, et des lignes où on coupe, etc.
-       https://gamedevelopment.tutsplus.com/tutorials/quick-tip-use-quadtrees-to-detect-likely-collisions-in-2d-space--gamedev-374
-"""
-
-
 class CerclePhysique:
     """Un objet physique, dont le node est donné par dpg dans le main"""
     @property

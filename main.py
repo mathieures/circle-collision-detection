@@ -1,15 +1,6 @@
-"""
-TODO : convertir tout ça avec dearpygui. Il faut :
-        - trouver comment bouger des objets
-        - trouver si on peut mettre ces trucs dans les classes Particule etc.,
-          parce que sinon ça va être l'enfer
-    Et avec ça ça devrait être plus ou moins bon
-"""
-
 import sys
 from random import randrange, seed
 from time import perf_counter
-# from itertools import product
 
 import dearpygui.dearpygui as dpg
 from Obstacle import Obstacle
@@ -17,23 +8,15 @@ from Essaim import Essaim
 
 from Quadtree import Rectangle, Quadtree
 
-
 def rand_coords(limit=500):
     """Paire de coordonnées aléatoires"""
     return (randrange(limit), randrange(limit))
 
-
 def update():
     """Exécuté chaque frame"""
-    # global delta_time, previous_perf_counter
-    # current_perf_counter = perf_counter()
-    # delta_time = current_perf_counter - previous_perf_counter
-    # previous_perf_counter = current_perf_counter
-    # print(delta_time)
     nb_operations = 0
 
     obstacles = [*essaim_obstacles, *mur]
-    # for particule, obstacle in product(essaim_particules, obstacles):
     for particule in essaim_particules:
         particule.move(1, 0)
         for obstacle in obstacles:
