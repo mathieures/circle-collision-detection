@@ -2,12 +2,11 @@ import sys
 from random import randrange, seed
 from time import perf_counter
 from itertools import chain
-
 import dearpygui.dearpygui as dpg
-from Obstacle import Obstacle
-from Swarm import Swarm
 
 from Quadtree import Rectangle, Quadtree
+from Obstacle import Obstacle
+from Swarm import Swarm
 
 
 def rand_coords(limit=500):

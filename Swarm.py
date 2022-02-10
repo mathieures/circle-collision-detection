@@ -1,4 +1,5 @@
 import dearpygui.dearpygui as dpg
+
 from Particule import Particule
 from Obstacle import Obstacle
 
@@ -6,10 +7,10 @@ from Obstacle import Obstacle
 class Swarm:
     """Un essaim d'objects, un groupe quoi"""
     @classmethod
-    def particules(cls, coordonnees, radius):
+    def particules(cls, coordinates, radius):
         """Essaim, mais de particules"""
-        result = cls(coordonnees)
-        for coords in result.coordonnees:
+        result = cls(coordinates)
+        for coords in result.coordinates:
             # On crée un objet node (en gros une matrice)
             with dpg.draw_node() as particule_node:
                 # On se déplace au bon endroit
@@ -19,10 +20,10 @@ class Swarm:
         return result
 
     @classmethod
-    def obstacles(cls, coordonnees):
+    def obstacles(cls, coordinates):
         """Essaim, mais d'objets Obstacle"""
-        result = cls(coordonnees)
-        for coords in result.coordonnees:
+        result = cls(coordinates)
+        for coords in result.coordinates:
             # On crée un objet node (en gros une matrice)
             with dpg.draw_node() as obstacle_node:
                 # On se déplace au bon endroit
@@ -32,8 +33,8 @@ class Swarm:
         return result
 
 
-    def __init__(self, coordonnees):
-        self.coordonnees = coordonnees
+    def __init__(self, coordinates):
+        self.coordinates = coordinates
 
         self.objects = []
 

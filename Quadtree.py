@@ -1,5 +1,6 @@
-from numba import jit
 # https://gamedevelopment.tutsplus.com/tutorials/quick-tip-use-quadtrees-to-detect-likely-collisions-in-2d-space--gamedev-374
+from numba import jit
+
 from Rectangle import Rectangle, DebugRectangle
 import colors
 
@@ -16,7 +17,8 @@ class Quadtree:
     def get_index_from_bb(rect_1, rect2):
         """
         Retourne l'indice du node dans lequel
-        doit aller rect2, à partir de rect_1
+        doit aller rect2, à partir de rect_1.
+        rect_1 et rect_2 sont des tuples de 4 entiers.
         """
         index = -1
 
