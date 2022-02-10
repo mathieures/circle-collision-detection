@@ -1,16 +1,16 @@
-from CerclePhysique import CerclePhysique
-import couleurs
+from PhysicsCircle import PhysicsCircle
+import colors
 
-class Obstacle(CerclePhysique):
+class Obstacle(PhysicsCircle):
     """Un obstacle, qui ne laisse pas passer les particules"""
-    RAYON = 9
+    RADIUS = 9
+
     def __init__(self, node, coords):
-        super().__init__(node, coords, rayon=type(self).RAYON, couleur=couleurs.GRIS)
+        super().__init__(node, coords, radius=type(self).RADIUS, color=colors.GREY)
+
 
     def check_collision(self, objet):
         """L'obstacle ne fait rien"""
-        pass
 
     def action_collision(self):
         """L'obstacle ne fait rien"""
-        pass

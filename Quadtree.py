@@ -1,7 +1,7 @@
 from numba import jit
 # https://gamedevelopment.tutsplus.com/tutorials/quick-tip-use-quadtrees-to-detect-likely-collisions-in-2d-space--gamedev-374
 from Rectangle import Rectangle, DebugRectangle
-import couleurs
+import colors
 
 
 class Quadtree:
@@ -13,12 +13,15 @@ class Quadtree:
 
     @staticmethod
     @jit(nopython=True)
-    def get_index_from_bb(self_rect, other_rect):
-        """test de compiler cette fonction"""
+    def get_index_from_bb(rect_1, rect2):
+        """
+        Retourne l'indice du node dans lequel
+        doit aller rect2, à partir de rect_1
+        """
         index = -1
 
-        self_x, self_y, self_height, self_width = self_rect
-        rect_x, rect_y, rect_height, rect_width = other_rect
+        self_x, self_y, self_height, self_width = rect_1
+        rect_x, rect_y, rect_height, rect_width = rect2
 
         vertical_midpoint = self_x + self_width // 2
         horizontal_midpoint = self_y + self_height // 2
@@ -44,7 +47,6 @@ class Quadtree:
                 index = 3
 
         return index
-
 
 
     def __init__(self, window, level, bounds):
@@ -90,10 +92,10 @@ class Quadtree:
                                  Rectangle(x + sub_width, y + sub_height, sub_width, sub_height))
 
         # On dessine les zones
-        self.debug_zones.append(DebugRectangle(x + sub_width, y, sub_width, sub_height, color=couleurs.ROUGE, parent=self.window))
-        self.debug_zones.append(DebugRectangle(x, y, sub_width, sub_height, color=couleurs.ROUGE, parent=self.window))
-        self.debug_zones.append(DebugRectangle(x, y + sub_height, sub_width, sub_height, color=couleurs.ROUGE, parent=self.window))
-        self.debug_zones.append(DebugRectangle(x + sub_width, y + sub_height, sub_width, sub_height, color=couleurs.ROUGE, parent=self.window))
+        self.debug_zones.append(DebugRectangle(x + sub_width, y, sub_width, sub_height, color=colors.RED, parent=self.window))
+        self.debug_zones.append(DebugRectangle(x, y, sub_width, sub_height, color=colors.RED, parent=self.window))
+        self.debug_zones.append(DebugRectangle(x, y + sub_height, sub_width, sub_height, color=colors.RED, parent=self.window))
+        self.debug_zones.append(DebugRectangle(x + sub_width, y + sub_height, sub_width, sub_height, color=colors.RED, parent=self.window))
 
     def get_index(self, objet):
         """
@@ -141,20 +143,20 @@ class Quadtree:
         for objet in objets:
             self.insert(objet)
 
-    def retrieve(self, objet, collisions_potentielles=None):
+    def retrieve(self, objet, potential_collisions=None):
         """
         Retourne tous les objets qui pourraient
         collide avec l'objet donné en paramètre
         """
-        # En espérant que ça fonctionne de le mettre à None
-        if collisions_potentielles is None:
-            collisions_potentielles = []
+        # Au premier appel de la fonction
+        if potential_collisions is None:
+            potential_collisions = []
 
         index = self.get_index(objet)
         if index != -1 and self.nodes[0] is not None:
-            self.nodes[index].retrieve(objet, collisions_potentielles)
+            self.nodes[index].retrieve(objet, potential_collisions)
 
-        collisions_potentielles.extend(self.objects)
+        potential_collisions.extend(self.objects)
 
-        # print(f"{collisions_potentielles}")
-        return collisions_potentielles
+        # print(f"{potential_collisions=}")
+        return potential_collisions

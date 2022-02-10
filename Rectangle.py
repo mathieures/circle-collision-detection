@@ -13,6 +13,7 @@ class Rectangle:
         return f"{type(self).__name__}, {self.x, self.y, self.width, self.height}"
 
     def __iter__(self):
+        """Sert à transformer un Rectangle en tuple plus facilement"""
         return iter((self.x, self.y, self.width, self.height))
 
 
@@ -32,5 +33,6 @@ class DebugRectangle(Rectangle):
         """Supprime le rectangle graphiquement"""
         try:
             dpg.delete_item(self.tag)
+        # Levée quand le tag a été réassigné je crois
         except SystemError:
             pass
