@@ -28,6 +28,21 @@ class DebugRectangle(Rectangle):
             **kwargs
         )
 
+    # def __eq__(self, other):
+    #     """
+    #     Permet de déterminer si deux DebugRectangle sont identiques.
+    #     Utilisé avec self.__hash__ par Quadtree pour ne pas en redessiner
+    #     """
+    #     if isinstance(other, type(self)):
+    #         return (self.x == other.x) and (
+    #                 self.y == other.y) and (
+    #                 self.width == other.width) and (
+    #                 self.height == other.height)
+    #     return NotImplemented
+
+    # def __hash__(self):
+    #     return hash((self.x, self.y, self.width, self.height))
+
 
     def delete(self):
         """Supprime le rectangle graphiquement"""

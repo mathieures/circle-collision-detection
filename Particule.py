@@ -7,8 +7,10 @@ from PhysicsCircle import PhysicsCircle
 
 class Particule(PhysicsCircle):
     """Une particule : un cercle physique qui peut bouger"""
-    def __init__(self, node, coords, radius=5, speed=1):
-        super().__init__(node, list(coords), radius, color=colors.BLACK)
+    def __init__(self, coords, radius=5, speed=1):
+        super().__init__(list(coords), radius=radius, color=colors.BLACK)
+    # def __init__(self, node, coords, radius=5, speed=1):
+    #     super().__init__(node, list(coords), radius, color=colors.BLACK)
         self.speed = speed
         # self.alive = True
 
@@ -20,7 +22,7 @@ class Particule(PhysicsCircle):
         dpg.configure_item(self.circle, fill=colors.RED)
 
     def check_collision(self, objet):
-        """Première passe de l'algorithme de collision : algorithme naïf"""
+        """Vérifie la collision entre la particule et un autre objet"""
         # if self.alive:
         if dist(self.coords, objet.coords) < self.radius + objet.radius:
             # print("hit")
@@ -35,4 +37,5 @@ class Particule(PhysicsCircle):
             speed = self.speed
         self.coords[0] += delta_x * speed
         self.coords[1] += delta_y * speed
-        dpg.apply_transform(self.node, dpg.create_translation_matrix(self.coords))
+        # dpg.apply_transform(self.node, dpg.create_translation_matrix(self.coords))
+        dpg.configure_item(self.circle, center=self.coords)

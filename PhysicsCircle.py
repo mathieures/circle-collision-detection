@@ -17,13 +17,14 @@ class PhysicsCircle:
         return Rectangle(bb_x, bb_y, double_radius, double_radius)
 
 
-    def __init__(self, node, coords, radius, color):
-        self.node = node
+    def __init__(self, coords, radius, color):
+    # def __init__(self, node, coords, radius, color):
+    #     self.node = node
         self.coords = coords
         self.radius = radius
 
         # On dessine
-        self.circle = dpg.draw_circle((0, 0), self.radius, fill=color)
+        self.circle = dpg.draw_circle(self.coords, self.radius, fill=color)
 
     def __repr__(self):
         return f"{type(self).__name__} of radius {self.radius} at {self.coords}"

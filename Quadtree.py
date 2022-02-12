@@ -10,6 +10,7 @@ class Quadtree:
     # MAX_LEVELS = 10
     MAX_LEVELS = 20
 
+
     def __init__(self, window, level, bounds):
         self.window = window
         self.level = level # 0 étant la racine

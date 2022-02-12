@@ -13,6 +13,7 @@ def rand_coords(limit=500):
     """Paire de coordonnées aléatoires"""
     return (randrange(limit), randrange(limit))
 
+
 def update_naive():
     """Exécuté chaque frame"""
     nb_operations = 0
@@ -26,6 +27,7 @@ def update_naive():
                 swarm_particules.remove(particule)
                 break
     # print(f"{nb_operations=}")
+
 
 def update_quadtree():
     """Exécuté chaque frame"""
@@ -41,7 +43,7 @@ def update_quadtree():
             # particule.check_collision(autre)
             if particule.check_collision(autre):
                 swarm_particules.remove(particule)
-                break # On retourne à la grande boucle
+                break  # On retourne à la grande boucle
     # print(f"{nb_operations=}")
 
 
@@ -57,15 +59,16 @@ NB_OBSTACLES = 30
 coords_obstacles = [rand_coords(MIN_COORD) for _ in range(NB_OBSTACLES)]
 
 coords_wall = [(WINDOW_DIMENSIONS[0], y)
-              for y in range(0,
-                             MIN_COORD + Obstacle.RADIUS,
-                             Obstacle.RADIUS * 2)]
+               for y in range(0,
+                              MIN_COORD + Obstacle.RADIUS,
+                              Obstacle.RADIUS * 2)]
 
 seed(0)
 dpg.create_context()
 
 with dpg.window(tag="primary_window"):
-    quad = Quadtree("primary_window", level=0, bounds=Rectangle(0, 0, *WINDOW_DIMENSIONS))
+    quad = Quadtree("primary_window", level=0,
+                    bounds=Rectangle(0, 0, *WINDOW_DIMENSIONS))
 
     wall = Swarm.obstacles(coords_wall)
 
@@ -90,7 +93,6 @@ dpg.create_viewport(width=WINDOW_DIMENSIONS[0] + 30,
                     y_pos=0)
 dpg.setup_dearpygui()
 dpg.show_viewport()
-
 
 
 # dpg.start_dearpygui()

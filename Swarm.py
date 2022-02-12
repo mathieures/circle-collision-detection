@@ -1,4 +1,4 @@
-import dearpygui.dearpygui as dpg
+# import dearpygui.dearpygui as dpg
 
 from Particule import Particule
 from Obstacle import Obstacle
@@ -11,12 +11,16 @@ class Swarm:
         """Essaim, mais de particules"""
         result = cls(coordinates)
         for coords in result.coordinates:
-            # On crée un objet node (en gros une matrice)
-            with dpg.draw_node() as particule_node:
-                # On se déplace au bon endroit
-                dpg.apply_transform(particule_node, dpg.create_translation_matrix(coords))
-                particule = Particule(particule_node, coords, radius=radius, speed=1)
-                result.objects.append(particule)
+
+            particule = Particule(coords, radius=radius, speed=1)
+            result.objects.append(particule)
+
+            # # On crée un objet node (en gros une matrice)
+            # with dpg.draw_node() as particule_node:
+            #     # On se déplace au bon endroit
+            #     dpg.apply_transform(particule_node, dpg.create_translation_matrix(coords))
+            #     particule = Particule(particule_node, coords, radius=radius, speed=1)
+            #     result.objects.append(particule)
         return result
 
     @classmethod
@@ -24,12 +28,16 @@ class Swarm:
         """Essaim, mais d'objets Obstacle"""
         result = cls(coordinates)
         for coords in result.coordinates:
-            # On crée un objet node (en gros une matrice)
-            with dpg.draw_node() as obstacle_node:
-                # On se déplace au bon endroit
-                dpg.apply_transform(obstacle_node, dpg.create_translation_matrix(coords))
-                obstacle = Obstacle(obstacle_node, coords)
-                result.objects.append(obstacle)
+
+            obstacle = Obstacle(coords)
+            result.objects.append(obstacle)
+
+            # # On crée un objet node (en gros une matrice)
+            # with dpg.draw_node() as obstacle_node:
+            #     # # On se déplace au bon endroit
+            #     # dpg.apply_transform(obstacle_node, dpg.create_translation_matrix(coords))
+            #     obstacle = Obstacle(obstacle_node, coords)
+            #     result.objects.append(obstacle)
         return result
 
 
