@@ -1,3 +1,5 @@
+from numba import jit
+
 # https://gamedevelopment.tutsplus.com/tutorials/quick-tip-use-quadtrees-to-detect-likely-collisions-in-2d-space--gamedev-374
 from Rectangle import Rectangle, DebugRectangle
 import colors
@@ -11,10 +13,42 @@ class Quadtree:
     MAX_LEVELS = 20
 
 
+    @staticmethod
+    @jit(nopython=True)
+    def get_index_of_rect(rect1, rect2):
+        """Retourne l'indice du fils de rect1 où rect2 doit aller"""
+        index = -1
+
+        vertical_midpoint = rect1.x + rect1.width // 2
+        horizontal_midpoint = rect1.y + rect1.height // 2
+
+        # Est-ce que l'objet peut complètement tenir dans la moitié haute ?
+        in_top_half = rect2.y < horizontal_midpoint and rect2.y + rect2.height < horizontal_midpoint
+
+        # Est-ce que l'objet peut complètement tenir dans la moitié basse ?
+        in_bottom_half = rect2.y > horizontal_midpoint # On peut ne tester que l'origine
+
+        # S'il peut complètement tenir dans la partie gauche
+        if rect2.x < vertical_midpoint and rect2.x + rect2.width < vertical_midpoint:
+            # S'il tenait dans la partie haute, il est en haut à gauche
+            if in_top_half:
+                index = 1
+            elif in_bottom_half:
+                index = 2
+        # S'il peut complètement tenir dans la partie droite
+        elif rect2.x > vertical_midpoint:
+            if in_top_half:
+                index = 0
+            elif in_bottom_half:
+                index = 3
+
+        return index
+
+
     def __init__(self, window, level, bounds):
         self.window = window
         self.level = level # 0 étant la racine
-        self.bounds = bounds # l'espace 2D que le node occupe, un Rectangle
+        self.bounds = bounds # l'espace 2D que le node occupe, un namedtuple Rectangle
         self.objects = [] # liste d'objets, ici pour l'exemple des objets Rectangle
         self.nodes = [None] * 4 # les 4 noeuds fils
 
@@ -53,45 +87,20 @@ class Quadtree:
         self.nodes[3] = Quadtree(self.window, next_level,
                                  Rectangle(x + sub_width, y + sub_height, sub_width, sub_height))
 
-        # On dessine les zones
-        self.debug_zones.append(DebugRectangle(x + sub_width, y, sub_width, sub_height, color=colors.RED, parent=self.window))
-        self.debug_zones.append(DebugRectangle(x, y, sub_width, sub_height, color=colors.RED, parent=self.window))
-        self.debug_zones.append(DebugRectangle(x, y + sub_height, sub_width, sub_height, color=colors.RED, parent=self.window))
-        self.debug_zones.append(DebugRectangle(x + sub_width, y + sub_height, sub_width, sub_height, color=colors.RED, parent=self.window))
+        # # On dessine les zones
+        # self.debug_zones.append(DebugRectangle(x + sub_width, y, sub_width, sub_height, color=colors.RED, parent=self.window))
+        # self.debug_zones.append(DebugRectangle(x, y, sub_width, sub_height, color=colors.RED, parent=self.window))
+        # self.debug_zones.append(DebugRectangle(x, y + sub_height, sub_width, sub_height, color=colors.RED, parent=self.window))
+        # self.debug_zones.append(DebugRectangle(x + sub_width, y + sub_height, sub_width, sub_height, color=colors.RED, parent=self.window))
 
-    def get_index(self, other):
+    def get_index(self, obj):
         """
         Retourne l'indice du fils dans lequel l'objet passé
         en paramètre devra aller, ou -1 s'il n'est dans aucun
         """
-        rect = other.bounding_box
+        rect = obj.bounding_box
 
-        index = -1
-
-        vertical_midpoint = self.bounds.x + self.bounds.width // 2
-        horizontal_midpoint = self.bounds.y + self.bounds.height // 2
-
-        # Est-ce que l'objet peut complètement tenir dans la moitié haute ?
-        in_top_half = rect.y < horizontal_midpoint and rect.y + rect.height < horizontal_midpoint
-
-        # Est-ce que l'objet peut complètement tenir dans la moitié basse ?
-        in_bottom_half = rect.y > horizontal_midpoint # On peut ne tester que l'origine
-
-        # S'il peut complètement tenir dans la partie gauche
-        if rect.x < vertical_midpoint and rect.x + rect.width < vertical_midpoint:
-            # S'il tenait dans la partie haute, il est en haut à gauche
-            if in_top_half:
-                index = 1
-            elif in_bottom_half:
-                index = 2
-        # S'il peut complètement tenir dans la partie droite
-        elif rect.x > vertical_midpoint:
-            if in_top_half:
-                index = 0
-            elif in_bottom_half:
-                index = 3
-
-        return index
+        return type(self).get_index_of_rect(self.bounds, rect)
 
     def insert(self, obj):
         """

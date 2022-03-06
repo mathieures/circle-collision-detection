@@ -34,6 +34,6 @@ class PhysicsCircle:
         """Méthode appelée quand l'objet est sujet à une collision"""
         raise NotImplementedError
 
-    def check_collision(self, objet):
+    def check_collision(self, other):
         """Détecte les collisions avec le PhysicsCircle passé en paramètre"""
         raise NotImplementedError

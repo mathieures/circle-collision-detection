@@ -12,7 +12,7 @@ class Obstacle(PhysicsCircle):
     #     super().__init__(node, coords, radius=type(self).RADIUS, color=colors.GREY)
 
 
-    def check_collision(self, objet):
+    def check_collision(self, other):
         """L'obstacle ne fait rien"""
 
     def action_collision(self):

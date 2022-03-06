@@ -1,20 +1,24 @@
+from collections import namedtuple
 import dearpygui.dearpygui as dpg
 
 
-class Rectangle:
-    """Un rectangle, constitué d'un point et de dimensions"""
-    def __init__(self, x, y, width, height):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
+Rectangle = namedtuple("Rectangle", ["x", "y", "width", "height"])
 
-    def __repr__(self):
-        return f"{type(self).__name__}, {self.x, self.y, self.width, self.height}"
 
-    def __iter__(self):
-        """Sert à transformer un Rectangle en tuple plus facilement"""
-        return iter((self.x, self.y, self.width, self.height))
+# class Rectangle:
+#     """Un rectangle, constitué d'un point et de dimensions"""
+#     def __init__(self, x, y, width, height):
+#         self.x = x
+#         self.y = y
+#         self.width = width
+#         self.height = height
+
+#     def __repr__(self):
+#         return f"{type(self).__name__}, {self.x, self.y, self.width, self.height}"
+
+#     def __iter__(self):
+#         """Sert à transformer un Rectangle en tuple plus facilement"""
+#         return iter((self.x, self.y, self.width, self.height))
 
 
 class DebugRectangle(Rectangle):
