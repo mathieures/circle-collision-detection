@@ -10,42 +10,44 @@ from Swarm import Swarm
 
 
 def rand_coords(limit=500):
-    """Paire de coordonnées aléatoires"""
+    """Couple of random coordinates"""
     return (randrange(limit), randrange(limit))
 
 def update_naive():
-    """Exécuté chaque frame"""
-    nb_operations = 0
-
+    """Executed every frame"""
+    # nb_operations = 0
     obstacles = list(chain(swarm_obstacles, wall))
     for particule in swarm_particules:
+        # Movement
         particule.move(1, 0)
+        # Collision detection
         for obstacle in obstacles:
-            nb_operations += 1
+            # nb_operations += 1
             if particule.check_collision(obstacle):
                 swarm_particules.remove(particule)
                 break
     # print(f"{nb_operations=}")
 
 def update_quadtree():
-    """Exécuté chaque frame"""
+    """Executed every frame"""
     quad.clear()
     quad.insert_all(chain(swarm_particules, swarm_obstacles, wall))
 
-    nb_operations = 0
+    # nb_operations = 0
     for particule in swarm_particules:
+        # Movement
         particule.move(1.5, 0)
+        # Collision detection
         potential_collisions = set(quad.retrieve(particule)) - set([particule])
-        for autre in potential_collisions:
-            nb_operations += 1
-            # particule.check_collision(autre)
-            if particule.check_collision(autre):
+        for other in potential_collisions:
+            # nb_operations += 1
+            if particule.check_collision(other):
                 swarm_particules.remove(particule)
-                break # On retourne à la grande boucle
+                break # Go back to the outer loop
     # print(f"{nb_operations=}")
 
 
-## Variables globales ##
+## Global variables ##
 
 WINDOW_DIMENSIONS = (600, 600)
 MIN_COORD = int(min(WINDOW_DIMENSIONS) - 10)
@@ -73,10 +75,6 @@ with dpg.window(tag="primary_window"):
     swarm_particules = Swarm.particules(coords_particules, RADIUS_PARTICULES)
     swarm_obstacles = Swarm.obstacles(coords_obstacles)
 
-    # obstacles = [*swarm_obstacles, *wall]
-
-    # with dpg.handler_registry():
-    #     dpg.add_mouse_move_handler(callback=update_naive, user_data=data)
 dpg.set_primary_window("primary_window", True)
 
 with dpg.theme() as global_theme:
@@ -85,7 +83,7 @@ with dpg.theme() as global_theme:
 dpg.bind_theme(global_theme)
 
 
-# Le (0, 0) n'est pas vraiment en haut à gauche donc il faut compenser
+# (0, 0) si not exactly teh top left corner with dpg so this centers the viewport better
 dpg.create_viewport(width=WINDOW_DIMENSIONS[0] + 30,
                     height=WINDOW_DIMENSIONS[1] + 50,
                     y_pos=0)

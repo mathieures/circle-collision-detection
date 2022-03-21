@@ -6,7 +6,7 @@ from PhysicsCircle import PhysicsCircle
 
 
 class Particule(PhysicsCircle):
-    """Une particule : un cercle physique qui peut bouger"""
+    """A particule: a PhysicsCircle that can move"""
     __slots__ = ["speed"]
 
     def __init__(self, node, coords, radius=5, speed=1):
@@ -22,7 +22,7 @@ class Particule(PhysicsCircle):
         dpg.configure_item(self.circle, fill=colors.RED)
 
     def check_collision(self, objet):
-        """Première passe de l'algorithme de collision : algorithme naïf"""
+        """Check if there is a collision between this Particule and another PhysicsCircle"""
         # if self.alive:
         if dist(self.coords, objet.coords) < self.radius + objet.radius:
             # print("hit")
@@ -32,7 +32,7 @@ class Particule(PhysicsCircle):
         return False
 
     def move(self, delta_x, delta_y, speed=None):
-        """Bouge la particule en relatif"""
+        """Moves the Particule with relative coordinates"""
         if speed is None:
             speed = self.speed
         self.coords[0] += delta_x * speed

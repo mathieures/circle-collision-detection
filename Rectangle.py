@@ -2,7 +2,7 @@ import dearpygui.dearpygui as dpg
 
 
 class Rectangle:
-    """Un rectangle, constitué d'un point et de dimensions"""
+    """A rectangle: a point and dimensions"""
     __slots__ = ["x", "y", "width", "height"]
 
     def __init__(self, x, y, width, height):
@@ -15,12 +15,12 @@ class Rectangle:
         return f"{type(self).__name__}, {self.x, self.y, self.width, self.height}"
 
     def __iter__(self):
-        """Sert à transformer un Rectangle en tuple plus facilement"""
+        """Used to easily cast a Rectangle to a tuple"""
         return iter((self.x, self.y, self.width, self.height))
 
 
 class DebugRectangle(Rectangle):
-    """Un Rectangle mais qui est affiché graphiquement"""
+    """A debug rectangle, drawn on the screen"""
     __slots__ = ["tag"]
 
     def __init__(self, x, y, width, height, **kwargs):
@@ -34,9 +34,9 @@ class DebugRectangle(Rectangle):
 
 
     def delete(self):
-        """Supprime le rectangle graphiquement"""
+        """Graphically deletes the DebugRectangle"""
         try:
             dpg.delete_item(self.tag)
-        # Levée quand le tag a été réassigné je crois
+        # Raised when dpg reassigns the tag
         except SystemError:
             pass

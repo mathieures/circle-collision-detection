@@ -3,14 +3,14 @@ from Rectangle import Rectangle
 
 
 class PhysicsCircle:
-    """Un objet physique, dont le node est donné par dpg dans le main"""
+    """A physical circle, whose "node" (matrix) must be created by dpg"""
     __slots__ = ["node", "coords", "radius", "circle"]
 
     @property
     def bounding_box(self):
         """
-        La bounding box pour insérer plus facilement dans
-        le quadtree, sous la forme x, y, width, height
+        Get the bounding box of the PhysicsCircle, to insert easily
+        in the quadtree in the form of a Rectangle
         """
         half_radius = self.radius // 2
         double_radius = self.radius * 2
@@ -24,7 +24,7 @@ class PhysicsCircle:
         self.coords = coords
         self.radius = radius
 
-        # On dessine
+        # Draw the circle
         self.circle = dpg.draw_circle((0, 0), self.radius, fill=color)
 
     def __repr__(self):
@@ -32,9 +32,9 @@ class PhysicsCircle:
 
 
     def action_collision(self):
-        """Méthode appelée quand l'objet est sujet à une collision"""
+        """Called only when the object collides"""
         raise NotImplementedError
 
     def check_collision(self, objet):
-        """Détecte les collisions avec le PhysicsCircle passé en paramètre"""
+        """Detects collision with the PhysicsCircle in parameter"""
         raise NotImplementedError
