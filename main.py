@@ -59,7 +59,8 @@ coords_obstacles = [rand_coords(MIN_COORD) for _ in range(NB_OBSTACLES)]
 coords_wall = [(WINDOW_DIMENSIONS[0], y)
               for y in range(0,
                              MIN_COORD + Obstacle.RADIUS,
-                             Obstacle.RADIUS * 2)]
+                             int(Obstacle.RADIUS * 1.7))]
+                             # Obstacle.RADIUS * 2)]
 
 seed(0)
 dpg.create_context()

@@ -4,6 +4,8 @@ from Rectangle import Rectangle
 
 class PhysicsCircle:
     """Un objet physique, dont le node est donné par dpg dans le main"""
+    __slots__ = ["node", "coords", "radius", "circle"]
+
     @property
     def bounding_box(self):
         """

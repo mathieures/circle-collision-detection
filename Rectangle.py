@@ -3,6 +3,8 @@ import dearpygui.dearpygui as dpg
 
 class Rectangle:
     """Un rectangle, constitué d'un point et de dimensions"""
+    __slots__ = ["x", "y", "width", "height"]
+
     def __init__(self, x, y, width, height):
         self.x = x
         self.y = y
@@ -19,6 +21,8 @@ class Rectangle:
 
 class DebugRectangle(Rectangle):
     """Un Rectangle mais qui est affiché graphiquement"""
+    __slots__ = ["tag"]
+
     def __init__(self, x, y, width, height, **kwargs):
         super().__init__(x, y, width, height)
 

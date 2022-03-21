@@ -7,6 +7,8 @@ from PhysicsCircle import PhysicsCircle
 
 class Particule(PhysicsCircle):
     """Une particule : un cercle physique qui peut bouger"""
+    __slots__ = ["speed"]
+
     def __init__(self, node, coords, radius=5, speed=1):
         super().__init__(node, list(coords), radius, color=colors.BLACK)
         self.speed = speed
