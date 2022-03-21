@@ -3,6 +3,8 @@ import colors
 
 class Obstacle(PhysicsCircle):
     """Un obstacle, qui ne laisse pas passer les particules"""
+    __slots__ = []
+
     RADIUS = 9
 
     def __init__(self, node, coords):
