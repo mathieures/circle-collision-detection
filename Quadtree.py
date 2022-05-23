@@ -4,7 +4,7 @@ import colors
 
 
 class Quadtree:
-    """Un quadtree, ou arbre quartique"""
+    """A quadtree"""
     # MAX_OBJECTS = 5
     MAX_OBJECTS = 5
     # MAX_LEVELS = 10
@@ -12,47 +12,47 @@ class Quadtree:
 
     def __init__(self, window, level, bounds):
         self.window = window
-        self.level = level # 0 étant la racine
-        self.bounds = bounds # l'espace 2D que le node occupe, un Rectangle
-        self.objects = [] # liste d'objets, ici pour l'exemple des objets Rectangle
-        self.nodes = [None] * 4 # les 4 noeuds fils
+        self.level = level # 0 being the root
+        self.bounds = bounds # The 2D space the node occupies, a Rectangle object
+        self.objects = [] # List of objects, here Rectangle objects for the example
+        self.nodes = [None] * 4 # The 4 child nodes
 
         self.debug_zones = []
 
 
     def clear(self):
-        """Efface récursivement le Quadtree"""
+        """Recursively clear the Quadtree"""
         for zone in self.debug_zones:
             zone.delete()
 
         self.objects.clear()
         for i, node in enumerate(self.nodes):
             if node is not None:
-                node.clear() # appelle la méthode clear() du Quadtree fils
+                node.clear() # Calls the clear() method of the Quadtree child
                 self.nodes[i] = None
 
     def split(self):
-        """Sépare le Quadtree en 4 noeuds Quadtree fils"""
+        """Split the Quadtree into 4 child Quadtree nodes"""
         sub_width = self.bounds.width // 2
         sub_height = self.bounds.height // 2
         x, y = self.bounds.x, self.bounds.y
 
         next_level = self.level + 1
 
-        # En haut à droite
+        # Top right
         self.nodes[0] = Quadtree(self.window, next_level,
                                  Rectangle(x + sub_width, y, sub_width, sub_height))
-        # En haut à gauche
+        # Top left
         self.nodes[1] = Quadtree(self.window, next_level,
                                  Rectangle(x, y, sub_width, sub_height))
-        # En bas à gauche
+        # Bottom left
         self.nodes[2] = Quadtree(self.window, next_level,
                                  Rectangle(x, y + sub_height, sub_width, sub_height))
-        # En bas à droite
+        # Bottom right
         self.nodes[3] = Quadtree(self.window, next_level,
                                  Rectangle(x + sub_width, y + sub_height, sub_width, sub_height))
 
-        # On dessine les zones
+        # Draw the zones
         self.debug_zones.append(DebugRectangle(x + sub_width, y, sub_width, sub_height, color=colors.RED, parent=self.window))
         self.debug_zones.append(DebugRectangle(x, y, sub_width, sub_height, color=colors.RED, parent=self.window))
         self.debug_zones.append(DebugRectangle(x, y + sub_height, sub_width, sub_height, color=colors.RED, parent=self.window))
@@ -60,8 +60,8 @@ class Quadtree:
 
     def get_index(self, other):
         """
-        Retourne l'indice du fils dans lequel l'objet passé
-        en paramètre devra aller, ou -1 s'il n'est dans aucun
+        Returns the index of the child in which the object passed in
+        parameter should go, or -1 if it should be in none of them
         """
         rect = other.bounding_box
 
@@ -70,20 +70,20 @@ class Quadtree:
         vertical_midpoint = self.bounds.x + self.bounds.width // 2
         horizontal_midpoint = self.bounds.y + self.bounds.height // 2
 
-        # Est-ce que l'objet peut complètement tenir dans la moitié haute ?
+        # Can the object completely fit in the top half?
         in_top_half = rect.y < horizontal_midpoint and rect.y + rect.height < horizontal_midpoint
 
-        # Est-ce que l'objet peut complètement tenir dans la moitié basse ?
-        in_bottom_half = rect.y > horizontal_midpoint # On peut ne tester que l'origine
+        # Can the object completely fit in the bottom half?
+        in_bottom_half = rect.y > horizontal_midpoint # We only have to test the origin
 
-        # S'il peut complètement tenir dans la partie gauche
+        # If it can completely fit in the left half
         if rect.x < vertical_midpoint and rect.x + rect.width < vertical_midpoint:
-            # S'il tenait dans la partie haute, il est en haut à gauche
+            # If it can fit in the top half, then it's in the top left part
             if in_top_half:
                 index = 1
             elif in_bottom_half:
                 index = 2
-        # S'il peut complètement tenir dans la partie droite
+        # If it can completely fit in the right half
         elif rect.x > vertical_midpoint:
             if in_top_half:
                 index = 0
@@ -94,26 +94,26 @@ class Quadtree:
 
     def insert(self, obj):
         """
-        Insère un objet dans le Quadtree (s'il a une bounding box).
-        Si le noeud cible est rempli, il est séparé
-        et on met ses noeuds fils dans les bons noeuds
+        Insert an object in the Quadtree (if it has a bounding box).
+        If the target nde is full, it's split, and the
+        objects are put in the right child nodes
         """
-        # Si le node a des enfants, on l'insère dans un enfant
+        # If the node has children, insert the object in one of them
         if self.nodes[0] is not None:
             index = self.get_index(obj)
             if index != -1:
                 self.nodes[index].insert(obj)
                 return
 
-        # Sinon soit l'objet ne rentre pas soit il n'y a pas d'enfant
-        # On ajoute l'objet au node
+        # Else, either the object doesn't fit, or the node has no child
+        # We add the object to the node
         self.objects.append(obj)
 
         if len(self.objects) > self.MAX_OBJECTS and self.level < self.MAX_LEVELS:
             if self.nodes[0] is None:
                 self.split()
 
-            # On répartit les objets dans les enfants
+            # Dispatch the objects in the children
             i = 0
             while i < len(self.objects):
                 index = self.get_index(self.objects[i])
@@ -123,16 +123,16 @@ class Quadtree:
                     i += 1
 
     def insert_all(self, objects):
-        """Insère une liste d'objets dans l'arbre"""
+        """Insert a list of objects in the tree"""
         for obj in objects:
             self.insert(obj)
 
     def retrieve(self, obj, potential_collisions=None):
         """
-        Retourne tous les objets qui pourraient
-        collide avec l'objet donné en paramètre
+        Return all the objects that could collide
+        with the object given in parameter
         """
-        # Au premier appel de la fonction
+        # At the first call of the function
         if potential_collisions is None:
             potential_collisions = []
 

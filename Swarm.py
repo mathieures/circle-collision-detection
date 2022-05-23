@@ -5,10 +5,10 @@ from Obstacle import Obstacle
 
 
 class Swarm:
-    """Un essaim d'objects, un groupe quoi"""
+    """A swarm of objetcs, a group"""
     @classmethod
     def particules(cls, coordinates, radius):
-        """Essaim, mais de particules"""
+        """Create a Swarm of particules"""
         result = cls(coordinates)
         for coords in result.coordinates:
             # On crée un objet node (en gros une matrice)
@@ -21,7 +21,7 @@ class Swarm:
 
     @classmethod
     def obstacles(cls, coordinates):
-        """Essaim, mais d'objets Obstacle"""
+        """Create a Swarm of obstacles"""
         result = cls(coordinates)
         for coords in result.coordinates:
             # On crée un objet node (en gros une matrice)
@@ -42,10 +42,10 @@ class Swarm:
         return len(self.objects)
 
     def __iter__(self):
-        """Sert pour l'unpacking"""
+        """Useful for unpacking"""
         return iter(self.objects)
 
 
     def remove(self, objet):
-        """Supprime un objet de la liste"""
+        """Remove an object from the list of objects"""
         self.objects.remove(objet)
